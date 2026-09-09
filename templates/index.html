@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulsePoint Health Risk Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-panel">
+      <p class="eyebrow">Smart preventive screening</p>
+      <h1>Multi-Disease Prediction Studio</h1>
+      <p class="hero-copy">
+        Explore heart and mental stress screening in a calmer, clearer workspace built for quick data entry and readable results.
+      </p>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <span class="stat-label">Current tracks</span>
+          <strong>Heart + Stress</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Report export</span>
+          <strong>Instant PDF</strong>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Experience</span>
+          <strong>Mobile friendly</strong>
+        </article>
+      </div>
+
+      <div class="info-card">
+        <h2>How it works</h2>
+        <p>Enter your profile, choose a screening track, submit the relevant values, and generate a shareable report once the prediction is ready.</p>
+        <ul class="feature-list">
+          <li>Clean field grouping for faster form completion</li>
+          <li>Clear result panel with state-aware styling</li>
+          <li>One-click PDF report download after prediction</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="workspace-card">
+      <div class="workspace-header">
+        <div>
+          <p class="section-kicker">Prediction workspace</p>
+          <h2>Run a health screening</h2>
+        </div>
+        <p id="selectedTrack" class="track-pill">Choose a screening track to begin</p>
+      </div>
+
+      <div class="section user-grid">
+        <div class="input-group">
+          <label for="user_name">Patient name</label>
+          <input id="user_name" type="text" placeholder="Enter full name" autocomplete="name">
+        </div>
+
+        <div class="input-group">
+          <label for="disease">Screening track</label>
+          <select id="disease" onchange="toggleForms()">
+            <option value="">Select a prediction model</option>
+            <option value="heart">Heart Disease</option>
+            <option value="stress">Mental Stress</option>
+          </select>
+        </div>
+      </div>
+
+      <form id="heartForm" class="form-section" hidden>
+        <div class="form-heading">
+          <div>
+            <p class="form-tag">Track A</p>
+            <h3>Heart Disease Assessment</h3>
+          </div>
+          <p class="form-copy">Use clinically oriented numeric indicators to estimate heart risk.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="input-group">
+            <label for="h_age">Age</label>
+            <input id="h_age" type="number" min="1" placeholder="Years">
+          </div>
+          <div class="input-group">
+            <label for="sex">Sex</label>
+            <input id="sex" type="number" min="0" max="1" placeholder="1 = Male, 0 = Female">
+          </div>
+          <div class="input-group">
+            <label for="cp">Chest pain type</label>
+            <input id="cp" type="number" min="0" placeholder="Numeric chest pain code">
+          </div>
+          <div class="input-group">
+            <label for="trestbps">Resting blood pressure</label>
+            <input id="trestbps" type="number" min="0" placeholder="mm Hg">
+          </div>
+          <div class="input-group">
+            <label for="chol">Cholesterol</label>
+            <input id="chol" type="number" min="0" placeholder="mg/dl">
+          </div>
+          <div class="input-group">
+            <label for="thalach">Max heart rate</label>
+            <input id="thalach" type="number" min="0" placeholder="Beats per minute">
+          </div>
+          <div class="input-group">
+            <label for="exang">Exercise induced angina</label>
+            <input id="exang" type="number" min="0" max="1" placeholder="1 = Yes, 0 = No">
+          </div>
+        </div>
+
+        <button type="submit">Predict Heart Risk</button>
+      </form>
+
+      <form id="stressForm" class="form-section" hidden>
+        <div class="form-heading">
+          <div>
+            <p class="form-tag">Track B</p>
+            <h3>Mental Stress Assessment</h3>
+          </div>
+          <p class="form-copy">Capture sleep, activity, and daily recovery markers for a stress score.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="input-group">
+            <label for="s_age">Age</label>
+            <input id="s_age" type="number" min="1" placeholder="Years">
+          </div>
+          <div class="input-group">
+            <label for="sleep_duration">Sleep duration</label>
+            <input id="sleep_duration" type="number" min="0" step="0.1" placeholder="Hours per night">
+          </div>
+          <div class="input-group">
+            <label for="sleep_quality">Sleep quality</label>
+            <input id="sleep_quality" type="number" min="0" max="10" step="0.1" placeholder="Scale of 0 to 10">
+          </div>
+          <div class="input-group">
+            <label for="activity">Physical activity level</label>
+            <input id="activity" type="number" min="1" max="5" step="1" placeholder="Scale of 1 to 5" required>
+          </div>
+          <div class="input-group">
+            <label for="heart_rate">Heart rate</label>
+            <input id="heart_rate" type="number" min="0" placeholder="Beats per minute">
+          </div>
+          <div class="input-group">
+            <label for="steps">Daily steps</label>
+            <input id="steps" type="number" min="0" placeholder="Total steps">
+          </div>
+        </div>
+
+        <button type="submit">Predict Stress Score</button>
+      </form>
+
+      <section class="result-panel section" id="result-section">
+        <div class="result-topline">
+          <div>
+            <p class="section-kicker">Prediction result</p>
+            <h3>Assessment summary</h3>
+          </div>
+          <span id="resultBadge" class="result-badge neutral">Waiting for input</span>
+        </div>
+
+        <p id="resultMessage" class="result-message">
+          Select a screening track and complete the form to see your prediction here.
+        </p>
+        <h3 id="output"></h3>
+        <button id="downloadBtn" type="button" hidden>Download PDF Report</button>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const byId = id => document.getElementById(id);
+    const diseaseLabels = {
+      heart: "Heart Disease",
+      stress: "Mental Stress"
+    };
+
+    const trackCopy = {
+      heart: "Heart screening active",
+      stress: "Stress screening active"
+    };
+
+    const elements = {
+      disease: byId("disease"),
+      userName: byId("user_name"),
+      heartForm: byId("heartForm"),
+      stressForm: byId("stressForm"),
+      output: byId("output"),
+      resultMessage: byId("resultMessage"),
+      resultBadge: byId("resultBadge"),
+      resultSection: byId("result-section"),
+      downloadBtn: byId("downloadBtn"),
+      selectedTrack: byId("selectedTrack")
+    };
+
+    let reportData = {};
+
+    function resetResult() {
+      elements.output.innerText = "";
+      elements.resultMessage.innerText = "Complete the visible form and submit it to generate a prediction summary.";
+      elements.resultBadge.innerText = "Waiting for input";
+      elements.resultBadge.className = "result-badge neutral";
+      elements.downloadBtn.hidden = true;
+      elements.resultSection.classList.remove("ready", "high-risk", "low-risk", "stress-score");
+    }
+
+    function toggleForms() {
+      const selectedDisease = elements.disease.value;
+      const isHeart = selectedDisease === "heart";
+      const isStress = selectedDisease === "stress";
+
+      elements.heartForm.hidden = !isHeart;
+      elements.stressForm.hidden = !isStress;
+      elements.heartForm.classList.toggle("visible", isHeart);
+      elements.stressForm.classList.toggle("visible", isStress);
+      elements.selectedTrack.innerText = trackCopy[selectedDisease] || "Choose a screening track to begin";
+
+      resetResult();
+    }
+
+    function validatePayload(payload) {
+      if (elements.userName.value.trim() === "") {
+        alert("Please enter the patient name.");
+        return false;
+      }
+
+      for (const key in payload) {
+        if (payload[key] === "") {
+          alert("Please fill all fields before predicting.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function paintResult(resultText) {
+      const isHighRisk = resultText.includes("High Risk");
+      const isLowRisk = resultText.includes("Low Risk");
+      const isStressScore = resultText.includes("Stress Level Score");
+
+      elements.resultSection.classList.add("ready");
+
+      if (isHighRisk) {
+        elements.resultBadge.innerText = "Attention needed";
+        elements.resultBadge.className = "result-badge alert";
+        elements.resultMessage.innerText = "The model is flagging elevated heart-related risk indicators.";
+        elements.resultSection.classList.add("high-risk");
+      } else if (isLowRisk) {
+        elements.resultBadge.innerText = "Lower risk";
+        elements.resultBadge.className = "result-badge success";
+        elements.resultMessage.innerText = "The current inputs suggest a lower heart-related risk profile.";
+        elements.resultSection.classList.add("low-risk");
+      } else if (isStressScore) {
+        elements.resultBadge.innerText = "Stress score ready";
+        elements.resultBadge.className = "result-badge info";
+        elements.resultMessage.innerText = "Your stress screening score has been calculated from sleep and activity signals.";
+        elements.resultSection.classList.add("stress-score");
+      } else {
+        elements.resultBadge.innerText = "Result ready";
+        elements.resultBadge.className = "result-badge info";
+        elements.resultMessage.innerText = "Prediction completed successfully.";
+      }
+
+      elements.output.innerText = resultText;
+      elements.downloadBtn.hidden = false;
+    }
+
+    async function send(payload, submitButton) {
+      if (!validatePayload(payload)) {
+        return;
+      }
+
+      const originalLabel = submitButton.innerText;
+      submitButton.disabled = true;
+      submitButton.innerText = "Analyzing...";
+      elements.resultBadge.innerText = "Running model";
+      elements.resultBadge.className = "result-badge info";
+      elements.resultMessage.innerText = "Please wait while the prediction is being generated.";
+      elements.output.innerText = "";
+      elements.downloadBtn.hidden = true;
+
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Server error");
+        }
+
+        const data = await response.json();
+        reportData.result = data.result;
+        paintResult(data.result);
+      } catch (error) {
+        console.error(error);
+        elements.resultBadge.innerText = "Prediction failed";
+        elements.resultBadge.className = "result-badge alert";
+        elements.resultMessage.innerText = "The prediction could not be completed. Please check the numeric values and try again.";
+        alert("Prediction failed. Check inputs.");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerText = originalLabel;
+      }
+    }
+
+    elements.heartForm.onsubmit = event => {
+      event.preventDefault();
+
+      const payload = {
+        disease: "heart",
+        age: byId("h_age").value,
+        sex: byId("sex").value,
+        cp: byId("cp").value,
+        trestbps: byId("trestbps").value,
+        chol: byId("chol").value,
+        thalach: byId("thalach").value,
+        exang: byId("exang").value
+      };
+
+      reportData = {
+        name: elements.userName.value.trim(),
+        disease: diseaseLabels.heart,
+        inputs: payload
+      };
+
+      send(payload, event.submitter || elements.heartForm.querySelector("button"));
+    };
+
+    elements.stressForm.onsubmit = event => {
+      event.preventDefault();
+
+      const payload = {
+        disease: "stress",
+        age: byId("s_age").value,
+        sleep_duration: byId("sleep_duration").value,
+        sleep_quality: byId("sleep_quality").value,
+        physical_activity: byId("activity").value,
+        heart_rate: byId("heart_rate").value,
+        steps: byId("steps").value
+      };
+
+      reportData = {
+        name: elements.userName.value.trim(),
+        disease: diseaseLabels.stress,
+        inputs: payload
+      };
+
+      send(payload, event.submitter || elements.stressForm.querySelector("button"));
+    };
+
+    elements.downloadBtn.onclick = () => {
+      fetch("/download-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reportData)
+      })
+        .then(response => response.blob())
+        .then(blob => {
+          const anchor = document.createElement("a");
+          anchor.href = URL.createObjectURL(blob);
+          anchor.download = "health_report.pdf";
+          anchor.click();
+        });
+    };
+  </script>
+</body>
+</html>
